@@ -3,13 +3,10 @@ import 'dart:async';
 import 'package:DearOffer/common/config/config.dart';
 import 'package:DearOffer/common/utils/common_util.dart';
 import 'package:DearOffer/main_page.dart';
-import 'package:DearOffer/pages/home/home_page.dart';
 import 'package:DearOffer/widgets/common/load.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:DearOffer/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:DearOffer/pages/mine/theme.dart' as Theme;
 import 'package:DearOffer/pages/mine/bubble_indication_painter.dart';
@@ -112,8 +109,8 @@ class _LoginPageState extends State<LoginPage>
                   padding: EdgeInsets.only(top: 75.0),
                   child: new Image(
                       width: 130.0,
-                      height: 50.0,
-                      image: new AssetImage('assets/img/ic_launcher.png')),
+                      height: 150.0,
+                      image: new AssetImage('assets/img/main_logo.png')),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20.0),

@@ -28,6 +28,7 @@ class Config {
   static const SEARCH_COMPANY_URL = "http://javakk.cn:9999/es/company/search/";
   static const SEARCH_INTERVIEW_URL = "http://javakk.cn:9999/es/interview/search/";
   static const SEARCH_SALARY_URL = "http://javakk.cn:9008/salary/search/";
+  static const SEARCH_AGGRESSIVE_URL = "http://javakk.cn:9999/es/aggregation/search/";
   static const SEARCH_TEACHIN_URL = "http://api.tomxin.cn:8080/recruit";
 
 

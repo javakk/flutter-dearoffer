@@ -1,7 +1,9 @@
 import 'package:DearOffer/common/config/config.dart';
+import 'package:DearOffer/common/utils/common_util.dart';
 import 'package:DearOffer/pages/company/company_list_page.dart';
 import 'package:DearOffer/pages/interview/Interview_list_page.dart';
 import 'package:DearOffer/pages/salary/salary_page.dart';
+import 'package:DearOffer/pages/search/aggressive_search_page.dart';
 import 'package:DearOffer/pages/teachIn/teach_in_list_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +21,7 @@ class SearchPage extends StatefulWidget {
   }
 }
 
-class _SearchPage extends State<SearchPage>{
+class _SearchPage extends State<SearchPage> {
   List<Hot> hotItems = List();
   String searchType;
 
@@ -49,89 +51,131 @@ class _SearchPage extends State<SearchPage>{
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-        body: Column(
+  Widget buildChildren(List<Hot> children) {
+    List<Widget> names = []; //先建一个数组用于存放循环生成的widget
+    Widget content; //单独一个widg
+
+    for (Hot item in children) {
+      names.add(InkWell(
+        child: Chip(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            backgroundColor: CommonUtil.getChipBgColor(item.content),
+            label: Text(item.content)),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//            return CompanyListPage(
+//              showAppBar: true,
+//              keyword: item.content,
+//            );
+            return AggressiveSearchPage(
+              keyword: item.content,
+            );
+          }));
+        },
+      ));
+    }
+    content = Padding(
+        padding: EdgeInsets.only(left: 20),
+        child: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          alignment: WrapAlignment.start,
+          children: names,
+        ));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(top: 40, left: 10, bottom: 10),
-          child: TextField(
-              textInputAction: TextInputAction.search,
-              style: TextStyle(
-                  fontFamily: "WorkSansSemiBold",
-                  fontSize: 16.0,
-                  color: Colors.black),
-              decoration: InputDecoration(
-                hintText: "输入想搜索的信息",
-                hintStyle:
-                    TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                icon: Icon(
-                  FontAwesomeIcons.search,
-                  color: Color(0xFF66ccff),
-                ),
-              ),
-              controller: contentController,
-              onSubmitted: _preSearch),
-        ),
-        Row(
-          children: <Widget>[
-            ClickBtn(
-              icon: FontAwesomeIcons.meetup,
-              searchType: "company",
-              title: "公司",
-              keyword: contentController.text,
-            ),
-            ClickBtn(
-              icon: FontAwesomeIcons.dollarSign,
-              searchType: "salary",
-              title: "薪水",
-              keyword: contentController.text,
-            ),
-            ClickBtn(
-              icon: FontAwesomeIcons.envira,
-              searchType: "interview",
-              title: "面经",
-              keyword: contentController.text,
-            ),
-            ClickBtn(
-              icon: FontAwesomeIcons.teamspeak,
-              searchType: "teachin",
-              title: "宣讲会",
-              keyword: contentController.text,
-            ),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: hotItems.length,
-            key: PageStorageKey("hot-list"),
-            itemBuilder: (content, index) {
-              return HotItem(
-                  key: PageStorageKey(hotItems[index].content),
-                  content: hotItems[index].content,
-                  score: hotItems[index].score,
-                  index: index);
-            },
-            scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(15),
+          child: Text(
+            "热门搜索",
+            style: TextStyle(color: const Color(0xFF5394FF), fontSize: 18),
           ),
         ),
+        content,
       ],
-    ));
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    TextField searchField = TextField(
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            hintStyle: TextStyle(color: Colors.white),
+            border: InputBorder.none,
+            hintText: "搜索更多干货"),
+        controller: contentController,
+        textInputAction: TextInputAction.search,
+        onEditingComplete: (){
+          _preSearch(contentController.text);
+        },
+    );
+
+    return Scaffold(
+        appBar: AppBar(title: searchField, actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                _preSearch(contentController.text);
+              })
+        ]),
+        body: Column(
+          children: <Widget>[
+            Padding(
+              child: Row(
+                children: <Widget>[
+                  ClickBtn(
+                    icon: FontAwesomeIcons.meetup,
+                    searchType: "company",
+                    title: "公司",
+                    keyword: contentController.text,
+                  ),
+                  ClickBtn(
+                    icon: FontAwesomeIcons.dollarSign,
+                    searchType: "salary",
+                    title: "薪水",
+                    keyword: contentController.text,
+                  ),
+                  ClickBtn(
+                    icon: FontAwesomeIcons.envira,
+                    searchType: "interview",
+                    title: "面经",
+                    keyword: contentController.text,
+                  ),
+                  ClickBtn(
+                    icon: FontAwesomeIcons.teamspeak,
+                    searchType: "teachin",
+                    title: "宣讲会",
+                    keyword: contentController.text,
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.only(top: 5),
+            ),
+            buildChildren(hotItems),
+          ],
+        ));
   }
 
   void _preSearch(String keyword) {
-    final snackbar = SnackBar(
-      content: Text("请选择搜索类型"),
-      duration: Duration(seconds: 2),
-      backgroundColor: Color(0xFF66CCFF),
-    );
-    Scaffold.of(context).showSnackBar(snackbar);
+//    final snackbar = SnackBar(
+//      content: Text("选择搜索类型结果更准确"),
+//      duration: Duration(seconds: 2),
+//      backgroundColor: Color(0xFF66CCFF),
+//    );
+//    Scaffold.of(context).showSnackBar(snackbar);
+    if (keyword.isNotEmpty) {
+      Navigator.push<String>(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return AggressiveSearchPage(keyword: keyword);
+          },
+        ),
+      );
+    }
   }
-
 }
 
 class ClickBtn extends StatelessWidget {
@@ -204,7 +248,7 @@ class ClickBtn extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (BuildContext context) {
-              return InterviewListPage(showAppBar: true,keyword: keyword);
+              return InterviewListPage(showAppBar: true, keyword: keyword);
             },
           ),
         );

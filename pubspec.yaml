@@ -25,6 +25,7 @@ dependencies:
   intro_views_flutter: ^2.6.0
   card_settings: ^1.4.1
   city_pickers: ^0.1.16
+  intro_slider: ^1.2.0
   flutter_html_widget:
     git:
         url: https://github.com/ztj666/flutter_html_widget.git
